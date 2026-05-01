@@ -18,26 +18,6 @@ A Python script based on **Playwright** that automatically scrapes business data
 
 ---
 
-## 🚀 Installation
-
-```bash
-# 1. Create virtual environment
-python3 -m venv .venv
-
-# 2. Install dependencies using the venv's pip
-.venv/bin/pip install -r requirements.txt
-
-# 3. Install Chromium browser for Playwright
-.venv/bin/playwright install chromium
-
-# 4. (Optional) Setup environment variables
-cp .env.example .env
-```
-
-Edit `.env` and fill in the `GEMINI_API_KEY` if you wish to enable AI analysis.
-
----
-
 ## 🎮 Usage
 
 ```bash
@@ -53,6 +33,8 @@ source .venv/bin/activate
 # Enable Gemini AI analysis
 ./run.sh --keyword "Cafe in Jakarta" --max 30 --gemini
 ```
+Edit `.env` and fill in the `GEMINI_API_KEY` if you wish to enable AI analysis.
+
 
 ### CLI Options
 
