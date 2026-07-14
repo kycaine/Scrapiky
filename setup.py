@@ -47,7 +47,7 @@ def setup_backend():
     run_cmd([pip_exe, "install", "-r", "requirements.txt"], cwd=backend_dir)
     
     print("\n4. Installing Playwright Chromium browser...")
-    run_cmd([playwright_exe, "install", "chromium"], cwd=backend_dir)
+    run_cmd([python_exe, "-m", "playwright", "install", "chromium"], cwd=backend_dir)
     print("Backend setup complete!")
 
 def setup_frontend():
