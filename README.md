@@ -1,6 +1,6 @@
-# 🗺️ Google Maps Harvester
+# 🗺️ Scrapiky (Google Maps Harvester)
 
-A Python script based on **Playwright** that automatically scrapes business data from Google Maps — featuring stealth mode, auto-scroll lazy-loading, CSV/JSON export, and optional AI analysis via Gemini.
+Scrapiky is a modern, elegant web application and scraper that automatically extracts business data from Google Maps. It features a full React frontend, a FastAPI WebSocket backend, anti-detection stealth scraping via Playwright, and real-time logging.
 
 ---
 
@@ -8,80 +8,65 @@ A Python script based on **Playwright** that automatically scrapes business data
 
 | Feature | Description |
 |---|---|
-| 🕵️ Anti-Detection | Uses `playwright-stealth` to hide bot signals (navigator, WebGL, canvas fingerprint). |
-| 🖱️ Human Emulation | Random delays, mouse movements, and gradual scrolling. |
-| 🔄 URL-First Strategy | Collects all place URLs first to ensure stability and avoid stale elements. |
-| 📦 Data Extraction | Name, Rating, Review Count, Category, Address, Website, Phone. |
-| 📁 Automatic Export | Saves to CSV (UTF-8 BOM for Excel) and JSON formats per session. |
-| 🤖 Gemini Analysis | Optional AI analysis for business suitability (e.g., Work From Cafe). |
-| 🛡️ Error Handling | Layered try-except blocks, navigation fallbacks, and item timeouts. |
+| 🎨 **Elegant Interface** | Clean, modern UI built with React, Vite, and Tailwind-like styling. |
+| 🕵️ **Anti-Detection** | Uses Playwright stealth techniques to bypass bot detection. |
+| ⚡ **Real-time WebSockets** | Watch the scraping process live directly on your dashboard. |
+| 🛡️ **Smart Filters** | Skip places without phones, websites, reviews, or low ratings (< 3.0). |
+| 📦 **Instant CSV Export** | Download the harvested data neatly formatted in one click. |
+| 🔐 **Firebase Auth** | Secure Google Login integration. |
 
 ---
 
-## 🚀 Installation
+## 📁 Project Structure
 
+The project has been split into two independent parts to allow seamless deployment (e.g. Cloudflare Pages for Frontend, and a VPS for Backend).
+
+- **`/pages`** : The React (Vite) frontend application.
+- **`/server`** : The Python FastAPI backend and Playwright scraper logic.
+
+---
+
+## 🚀 Local Installation & Setup
+
+We have created an automated setup script that works across all operating systems. Just ensure you have **Python 3.9+** and **Node.js** installed on your computer.
+
+1. Open a terminal in the root folder of the project.
+2. Run the setup script:
 ```bash
-# 1. Create virtual environment
-python3 -m venv .venv
-
-# 2. Install dependencies using the venv's pip
-.venv/bin/pip install -r requirements.txt
-
-# 3. Install Chromium browser for Playwright
-.venv/bin/playwright install chromium
-
-# 4. (Optional) Setup environment variables
-cp .env.example .env
+python setup.py
 ```
-
-Edit `.env` and fill in the `GEMINI_API_KEY` if you wish to enable AI analysis.
+*This script will automatically create the virtual environment, install Python dependencies, install the Chromium browser for Playwright, and install all Node.js modules for the frontend.*
 
 ---
 
-## 🎮 Usage
+## 💻 How to Run (Cross-Platform)
 
+We have provided a cross-platform Python launcher that will start both the Frontend and the Backend simultaneously!
+
+From the root directory of the project, simply run:
 ```bash
-# Activate venv first
-source .venv/bin/activate
-
-# Basic example – scrape 20 results (browser window visible)
-./run.sh --keyword "Cafe in Jakarta" --max 20
-
-# Scrape 50 results in headless mode (no browser window)
-./run.sh --keyword "Coworking Bandung" --max 50 --headless
-
-# Enable Gemini AI analysis
-./run.sh --keyword "Cafe in Jakarta" --max 30 --gemini
+python run.py
 ```
+*(This script works automatically on Windows, macOS, and Linux).*
 
-### CLI Options
-
-| Flag | Default | Description |
-|---|---|---|
-| `--keyword` / `-k` | *(required)* | Search keyword for Google Maps. |
-| `--max` / `-m` | `20` | Maximum number of results to fetch. |
-| `--headless` | `False` | Run browser without a visible window. |
-| `--gemini` | `False` | Enable WFC analysis via Gemini AI. |
-| `--output` / `-o` | `./output` | Output directory for CSV/JSON files. |
+**Alternative (Manual Run):**
+If you prefer running them separately:
+- **Terminal 1 (Backend)**: `cd server && .venv/bin/uvicorn server:app --reload` (or `uvicorn server:app --reload` if venv is activated).
+- **Terminal 2 (Frontend)**: `cd pages && npm run dev`
 
 ---
 
-## 📂 Output Structure
+## 🌐 Deployment Guide
 
-```
-output/
-└── Cafe_in_Jakarta_20260501_102300.csv
-└── Cafe_in_Jakarta_20260501_102300.json
-```
+### Frontend (Cloudflare Pages)
+1. Push this repository to GitHub.
+2. Go to Cloudflare Pages and connect your repository.
+3. Set the **Root directory** to `pages`.
+4. Set the **Build command** to `npm run build`.
+5. Set the **Build output directory** to `dist`.
 
-### Data Columns
-
-```
-name | rating | review_count | category | address | website | phone | google_maps_url | wfc_analysis
-```
-
----
-
-## ⚠️ Disclaimer
-
-This script is for research and personal business analysis purposes only. Always comply with [Google Maps Terms of Service](https://maps.google.com/help/terms_maps/).
+### Backend (VPS / Render / DigitalOcean)
+1. Host the `server` folder on any server that supports Python and can run headless Chrome (e.g., Ubuntu VPS).
+2. Install Python, create a virtual environment, and install `requirements.txt` & `playwright`.
+3. Run the server using `uvicorn server:app --host 0.0.0.0 --port 8000`.
+4. Update the WebSocket URL inside `pages/src/App.jsx` to point to your new backend server IP/Domain.

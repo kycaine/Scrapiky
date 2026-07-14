@@ -1,9 +1,46 @@
+# ---------------------------------------------------------------------------
+# Scrapiky - Global .gitignore
+# ---------------------------------------------------------------------------
+
+# Node.js / Frontend (React/Vite)
+pages/node_modules/
+pages/dist/
+pages/build/
+pages/.eslintcache
+pages/npm-debug.log*
+pages/yarn-debug.log*
+pages/yarn-error.log*
+
+# Python / Backend (FastAPI)
+.venv/
 __pycache__/
 *.pyc
 *.pyo
+server/output/
+server/*.csv
+server/*.json
+
+# Environment Variables (Secrets)
 .env
-output/
-*.csv
-*.json
-.venv/
-EXAMPLE_RUN.md
+.env.*
+!.env.example
+server/.env
+pages/.env
+pages/.env.local
+pages/.env.development.local
+pages/.env.test.local
+pages/.env.production.local
+
+# OS / Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Graphify
+graphify-out/
