@@ -19,6 +19,9 @@ __pycache__/
 server/output/
 server/*.csv
 server/*.json
+server/build/
+server/dist/
+*.spec
 
 # Environment Variables (Secrets)
 .env
