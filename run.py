@@ -27,6 +27,15 @@ def run_frontend():
     npm_cmd = "npm.cmd" if os.name == 'nt' else "npm"
     subprocess.run([npm_cmd, "run", "dev"], cwd=frontend_dir)
 
+import time
+import webbrowser
+
+def open_browser():
+    # Wait for Vite and FastAPI to start
+    time.sleep(3)
+    print("[System] Opening browser at http://localhost:5173 ...")
+    webbrowser.open("http://localhost:5173")
+
 if __name__ == "__main__":
     print("========================================")
     print("      Starting Scrapiky Local Dev       ")
@@ -34,12 +43,15 @@ if __name__ == "__main__":
     
     t1 = threading.Thread(target=run_backend)
     t2 = threading.Thread(target=run_frontend)
+    t3 = threading.Thread(target=open_browser)
     
     t1.start()
     t2.start()
+    t3.start()
     
     try:
         t1.join()
         t2.join()
+        t3.join()
     except KeyboardInterrupt:
         print("\nShutting down Scrapiky servers...")

@@ -1,10 +1,36 @@
+import sys
+import os
 import asyncio
 import json
+import subprocess
 from pathlib import Path
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from scraper import scrape
 from logger import add_ws_callback, remove_ws_callback
+
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(Path.home() / ".scrapiky_browsers")
+
+def install_browser():
+    try:
+        from playwright._impl._driver import compute_driver_executable, get_driver_env
+        driver_executable = compute_driver_executable()
+        env = get_driver_env()
+        
+        if isinstance(driver_executable, tuple):
+            cmd = list(driver_executable) + ["install", "chromium"]
+        else:
+            cmd = [str(driver_executable), "install", "chromium"]
+            
+        print("[System] Checking/Installing Chromium browser. This may take a minute on first run...")
+        subprocess.check_call(cmd, env=env, stdout=subprocess.DEVNULL)
+        print("[System] Chromium browser is ready.")
+    except Exception as e:
+        print(f"[ERROR] Failed to install browser: {e}")
+
+install_browser()
 
 app = FastAPI(title="Scrapiky API")
 
@@ -76,3 +102,34 @@ async def websocket_endpoint(websocket: WebSocket):
             pass
     finally:
         remove_ws_callback(log_callback)
+
+if getattr(sys, 'frozen', False):
+    base_dir = Path(sys._MEIPASS)
+else:
+    base_dir = Path(__file__).parent.parent
+
+dist_dir = base_dir / "pages" / "dist"
+
+if dist_dir.exists():
+    app.mount("/assets", StaticFiles(directory=str(dist_dir / "assets")), name="assets")
+    
+    @app.get("/{full_path:path}")
+    async def serve_react_app(full_path: str):
+        path = dist_dir / full_path
+        if path.exists() and path.is_file():
+            return FileResponse(str(path))
+        return FileResponse(str(dist_dir / "index.html"))
+
+if __name__ == "__main__":
+    import uvicorn
+    import threading
+    import webbrowser
+    import time
+    
+    def open_browser():
+        time.sleep(3)
+        print("[System] Opening browser at http://localhost:8000 ...")
+        webbrowser.open("http://localhost:8000")
+        
+    threading.Thread(target=open_browser, daemon=True).start()
+    uvicorn.run(app, host="127.0.0.1", port=8000)
